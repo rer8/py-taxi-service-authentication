@@ -13,7 +13,7 @@ def index(request):
     num_drivers = Driver.objects.count()
     num_cars = Car.objects.count()
     num_manufacturers = Manufacturer.objects.count()
-    num_visits = request.session.get("num_visits", 0)
+    num_visits = request.session.get("num_visits", 1)
     request.session["num_visits"] = num_visits + 1
     context = {
         "num_drivers": num_drivers,
@@ -38,7 +38,7 @@ class CarListView(LoginRequiredMixin, generic.ListView):
     queryset = Car.objects.select_related("manufacturer")
 
 
-class CarDetailView(LoginRequiredMixin, generic.ListView):
+class CarDetailView(LoginRequiredMixin, generic.DetailView):
     model = Car
 
 
@@ -47,6 +47,6 @@ class DriverListView(LoginRequiredMixin, generic.ListView):
     paginate_by = 5
 
 
-class DriverDetailView(generic.DetailView):
+class DriverDetailView(LoginRequiredMixin, generic.DetailView):
     model = Driver
     queryset = Driver.objects.prefetch_related("cars__manufacturer")
